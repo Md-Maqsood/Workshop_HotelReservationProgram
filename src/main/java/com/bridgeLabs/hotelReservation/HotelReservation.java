@@ -31,9 +31,6 @@ public class HotelReservation {
 		this.hotels = new ArrayList<Hotel>();
 	}
 
-	/**
-	 * uc1
-	 */
 	public void addHotel(String name, int regularWeekdayRate, int regularWeekendRate, int rewardsWeekdayRate,
 			int rewardsWeekendRate, int rating) {
 		Hotel hotel = new Hotel(name, regularWeekdayRate, regularWeekendRate, rewardsWeekdayRate, rewardsWeekendRate,
@@ -85,7 +82,7 @@ public class HotelReservation {
 		return cheapestBestRatedHotel;
 	}
 
-	public Hotel getCheapestBestRatedHotel(Customer customer) {
+	public Hotel getCheapestBestRatedHotelForRegular(Customer customer) {
 		int numWeekends = customer.getNumWeekends();
 		int numWeekdays = customer.getNumWeekdays();
 		Map<Hotel, Integer> hotelToTotalRateMap = hotels.stream().collect(Collectors.toMap(hotel -> hotel,
@@ -126,7 +123,12 @@ public class HotelReservation {
 		hotelReservation.addHotel("Ridgewood", 220, 150, 100, 40, 5);
 		try {
 			Customer customer = hotelReservation.getCustomerInput();
-			hotelReservation.getCheapestBestRatedHotelForRewards(customer);
+			CustomerType customerType = customer.getCustomerType();
+			if (customerType == CustomerType.REGULAR) {
+				hotelReservation.getCheapestBestRatedHotelForRegular(customer);
+			} else {
+				hotelReservation.getCheapestBestRatedHotelForRewards(customer);
+			}
 		} catch (InvalidInputException e) {
 			logger.info(e.getMessage());
 		}
