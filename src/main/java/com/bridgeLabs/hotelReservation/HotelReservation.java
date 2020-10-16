@@ -50,14 +50,23 @@ public class HotelReservation {
 		return new Customer(numWeekdays, numWeekends);
 	}
 
-	public Hotel getCheapestHotel(Customer customer) {
+	public Hotel getCheapestBestRatedHotel(Customer customer) {
 		int numWeekends = customer.getNumWeekends();
 		int numWeekdays = customer.getNumWeekdays();
 		Map<Hotel, Integer> hotelToTotalRateMap = hotels.stream().collect(Collectors.toMap(hotel -> hotel,
 				hotel -> hotel.getWeekendRate() * numWeekends + hotel.getWeekdayRate() * numWeekdays));
 		Hotel cheapestHotel = hotelToTotalRateMap.keySet().stream()
-				.min((n1, n2) -> hotelToTotalRateMap.get(n1) - hotelToTotalRateMap.get(n2)).orElse(null);
-		logger.debug(cheapestHotel.getName() + ", Total Rates: $" + hotelToTotalRateMap.get(cheapestHotel));
+				.min((hotel1, hotel2) -> {
+					int rateDifference=hotelToTotalRateMap.get(hotel1) - hotelToTotalRateMap.get(hotel2);
+					int ratingDifference = hotel1.getRating() - hotel2.getRating();
+					return rateDifference == 0 ? -(ratingDifference) : rateDifference;
+				}).orElse(null);
+		try {
+			logger.debug(cheapestHotel.getName() + ", Rating: " + cheapestHotel.getRating() + " and Total Rates: $"
+					+ hotelToTotalRateMap.get(cheapestHotel));
+		} catch (NullPointerException e) {
+			logger.debug("No hotel found");
+		}
 		return cheapestHotel;
 	}
 
@@ -66,7 +75,8 @@ public class HotelReservation {
 		hotelReservation.addHotel("Lakewood", 110, 90, 3);
 		hotelReservation.addHotel("Bridgewood", 150, 50, 4);
 		hotelReservation.addHotel("Ridgewood", 220, 150, 5);
-		hotelReservation.hotels.forEach(hotel->logger.debug(hotel));
+		Customer customer=hotelReservation.getCustomerInput();
+		hotelReservation.getCheapestBestRatedHotel(customer);
 	}
 }
 
