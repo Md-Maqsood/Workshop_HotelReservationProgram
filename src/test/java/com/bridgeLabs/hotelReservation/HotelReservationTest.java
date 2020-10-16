@@ -20,7 +20,7 @@ public class HotelReservationTest {
 		hotelReservation.addHotel("Lakewood", 110, 90, 80, 80, 3);
 		hotelReservation.addHotel("Bridgewood", 150, 50, 110, 50, 4);
 		hotelReservation.addHotel("Ridgewood", 220, 150, 100, 40, 5);
-		Customer customer = new Customer(2, 0);
+		Customer customer = new Customer(2, 0, CustomerType.REGULAR);
 		Hotel cheapestHotel = hotelReservation.getCheapestBestRatedHotel(customer);
 		Assert.assertEquals("Lakewood", cheapestHotel.getName());
 	}
@@ -41,7 +41,7 @@ public class HotelReservationTest {
 		hotelReservation.addHotel("Lakewood", 110, 90, 80, 80, 3);
 		hotelReservation.addHotel("Bridgewood", 150, 50, 110, 50, 4);
 		hotelReservation.addHotel("Ridgewood", 220, 150, 100, 40, 5);
-		Customer customer = new Customer(1, 2);
+		Customer customer = new Customer(1, 2, CustomerType.REGULAR);
 		Hotel cheapestHotel = hotelReservation.getCheapestBestRatedHotel(customer);
 		Assert.assertEquals("Bridgewood", cheapestHotel.getName());
 	}
@@ -60,7 +60,7 @@ public class HotelReservationTest {
 		hotelReservation.addHotel("Lakewood", 110, 90, 80, 80, 3);
 		hotelReservation.addHotel("Bridgewood", 150, 50, 110, 50, 4);
 		hotelReservation.addHotel("Ridgewood", 220, 150, 100, 40, 5);
-		Customer customer = new Customer(1, 1);
+		Customer customer = new Customer(1, 1, CustomerType.REGULAR);
 		Hotel cheapestBestRatedHotel = hotelReservation.getCheapestBestRatedHotel(customer);
 		Assert.assertEquals("Bridgewood", cheapestBestRatedHotel.getName());
 	}
@@ -71,7 +71,7 @@ public class HotelReservationTest {
 		hotelReservation.addHotel("Lakewood", 110, 90, 80, 80, 3);
 		hotelReservation.addHotel("Bridgewood", 150, 50, 110, 50, 4);
 		hotelReservation.addHotel("Ridgewood", 220, 150, 100, 40, 5);
-		Customer customer = new Customer(1, 1);
+		Customer customer = new Customer(1, 1, CustomerType.REGULAR);
 		Hotel bestRatedHotel = hotelReservation.getBestRatedHotel(customer);
 		Assert.assertEquals("Ridgewood", bestRatedHotel.getName());
 	}
@@ -84,5 +84,16 @@ public class HotelReservationTest {
 		int hotelRewardsWeekendRate = hotelReservation.hotels.get(0).getRewardsWeekendRate();
 		Assert.assertEquals(80, hotelRewardsWeekendRate);
 		Assert.assertEquals(80, hotelRewardsWeekdayRate);
+	}
+
+	@Test
+	public void givenHotelsWhenAddedHotelsAndCheapestBestRatedHotelFoundShouldReturnCheapestBestRatedHotelForRewards() {
+		HotelReservation hotelReservation = new HotelReservation();
+		hotelReservation.addHotel("Lakewood", 110, 90, 80, 80, 3);
+		hotelReservation.addHotel("Bridgewood", 150, 50, 110, 50, 4);
+		hotelReservation.addHotel("Ridgewood", 220, 150, 100, 40, 5);
+		Customer customer = new Customer(1, 1, CustomerType.REWARDS);
+		Hotel cheapestBestRatedHotel = hotelReservation.getCheapestBestRatedHotelForRewards(customer);
+		Assert.assertEquals("Ridgewood", cheapestBestRatedHotel.getName());
 	}
 }
