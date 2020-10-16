@@ -70,13 +70,28 @@ public class HotelReservation {
 		return cheapestHotel;
 	}
 
+	public Hotel getBestRatedHotel(Customer customer) {
+		int numWeekends = customer.getNumWeekends();
+		int numWeekdays = customer.getNumWeekdays();
+		Hotel bestRatedHotel = hotels.stream().max((hotel1, hotel2) -> hotel1.getRating() - hotel2.getRating())
+				.orElse(null);
+		try {
+			int totalRate = bestRatedHotel.getWeekdayRate() * numWeekdays
+					+ bestRatedHotel.getWeekendRate() * numWeekends;
+			logger.debug(bestRatedHotel.getName() + " & Total Rates $" + totalRate);
+		} catch (NullPointerException e) {
+			logger.debug("No hotel found");
+		}
+		return bestRatedHotel;
+	}
+	
 	public static void main(String[] args) {
 		HotelReservation hotelReservation = new HotelReservation();
 		hotelReservation.addHotel("Lakewood", 110, 90, 3);
 		hotelReservation.addHotel("Bridgewood", 150, 50, 4);
 		hotelReservation.addHotel("Ridgewood", 220, 150, 5);
 		Customer customer=hotelReservation.getCustomerInput();
-		hotelReservation.getCheapestBestRatedHotel(customer);
+		hotelReservation.getBestRatedHotel(customer);
 	}
 }
 

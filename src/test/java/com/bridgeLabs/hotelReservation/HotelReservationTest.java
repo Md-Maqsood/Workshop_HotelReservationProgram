@@ -64,4 +64,15 @@ public class HotelReservationTest {
 		Hotel cheapestBestRatedHotel = hotelReservation.getCheapestBestRatedHotel(customer);
 		Assert.assertEquals("Bridgewood", cheapestBestRatedHotel.getName());
 	}
+	
+	@Test
+	public void givenHotelsWhenAddedHotelsAndBestRatedHotelFoundShouldReturnBestRatedHotel() {
+		HotelReservation hotelReservation = new HotelReservation();
+		hotelReservation.addHotel("Lakewood", 110, 90, 3);
+		hotelReservation.addHotel("Bridgewood", 150, 50, 4);
+		hotelReservation.addHotel("Ridgewood", 220, 150, 5);
+		Customer customer = new Customer(1, 1);
+		Hotel bestRatedHotel = hotelReservation.getBestRatedHotel(customer);
+		Assert.assertEquals("Ridgewood", bestRatedHotel.getName());
+	}
 }
