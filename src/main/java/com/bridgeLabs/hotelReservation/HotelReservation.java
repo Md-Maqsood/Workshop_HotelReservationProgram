@@ -69,31 +69,18 @@ public class HotelReservation {
 	public Hotel getCheapestBestRatedHotelForRewards(Customer customer) {
 		int numWeekdays = customer.getNumWeekdays();
 		int numWeekends = customer.getNumWeekends();
-		Hotel cheapestBestRatedHotel = null;
-		Integer minTotalRate = null;
-		for (Hotel hotel : hotels) {
-			Integer totalRate = hotel.getRewardsWeekdayRate() * numWeekdays
-					+ hotel.getRewardsWeekendRate() * numWeekends;
-			try {
-				if (minTotalRate.compareTo(totalRate) > 0) {
-					cheapestBestRatedHotel = hotel;
-					minTotalRate = totalRate;
-				} else if (minTotalRate.compareTo(totalRate) == 0) {
-					if (hotel.getRating() > cheapestBestRatedHotel.getRating()) {
-						cheapestBestRatedHotel = hotel;
-						minTotalRate = totalRate;
-					}
-				}
-			} catch (NullPointerException e) {
-				cheapestBestRatedHotel = hotel;
-				minTotalRate = totalRate;
-			}
-		}
+		Map<Hotel, Integer> hotelToTotalRateMap = hotels.stream().collect(Collectors.toMap(hotel -> hotel,
+				hotel -> hotel.getRewardsWeekendRate() * numWeekends + hotel.getRewardsWeekdayRate() * numWeekdays));
+		Hotel cheapestBestRatedHotel = hotelToTotalRateMap.keySet().stream().min((hotel1, hotel2) -> {
+			int rateDifference = hotelToTotalRateMap.get(hotel1) - hotelToTotalRateMap.get(hotel2);
+			int ratingDifference = hotel1.getRating() - hotel2.getRating();
+			return rateDifference == 0 ? -(ratingDifference) : rateDifference;
+		}).orElse(null);
 		try {
-			logger.debug(cheapestBestRatedHotel.getName() + ", Rating: " + cheapestBestRatedHotel.getRating()
-					+ " and Total Rates: $" + minTotalRate);
+			logger.info(cheapestBestRatedHotel.getName() + ", Rating: " + cheapestBestRatedHotel.getRating()
+					+ " and Total Rates: $" + hotelToTotalRateMap.get(cheapestBestRatedHotel));
 		} catch (NullPointerException e) {
-			logger.debug("No hotel found");
+			logger.info("No hotel found");
 		}
 		return cheapestBestRatedHotel;
 	}
@@ -103,18 +90,18 @@ public class HotelReservation {
 		int numWeekdays = customer.getNumWeekdays();
 		Map<Hotel, Integer> hotelToTotalRateMap = hotels.stream().collect(Collectors.toMap(hotel -> hotel,
 				hotel -> hotel.getRegularWeekendRate() * numWeekends + hotel.getRegularWeekdayRate() * numWeekdays));
-		Hotel cheapestHotel = hotelToTotalRateMap.keySet().stream().min((hotel1, hotel2) -> {
+		Hotel cheapestBestRatedHotel = hotelToTotalRateMap.keySet().stream().min((hotel1, hotel2) -> {
 			int rateDifference = hotelToTotalRateMap.get(hotel1) - hotelToTotalRateMap.get(hotel2);
 			int ratingDifference = hotel1.getRating() - hotel2.getRating();
 			return rateDifference == 0 ? -(ratingDifference) : rateDifference;
 		}).orElse(null);
 		try {
-			logger.debug(cheapestHotel.getName() + ", Rating: " + cheapestHotel.getRating() + " and Total Rates: $"
-					+ hotelToTotalRateMap.get(cheapestHotel));
+			logger.info(cheapestBestRatedHotel.getName() + ", Rating: " + cheapestBestRatedHotel.getRating()
+					+ " and Total Rates: $" + hotelToTotalRateMap.get(cheapestBestRatedHotel));
 		} catch (NullPointerException e) {
-			logger.debug("No hotel found");
+			logger.info("No hotel found");
 		}
-		return cheapestHotel;
+		return cheapestBestRatedHotel;
 	}
 
 	public Hotel getBestRatedHotel(Customer customer) {
@@ -125,9 +112,9 @@ public class HotelReservation {
 		try {
 			int totalRate = bestRatedHotel.getRegularWeekdayRate() * numWeekdays
 					+ bestRatedHotel.getRegularWeekendRate() * numWeekends;
-			logger.debug(bestRatedHotel.getName() + " & Total Rates $" + totalRate);
+			logger.info(bestRatedHotel.getName() + " & Total Rates $" + totalRate);
 		} catch (NullPointerException e) {
-			logger.debug("No hotel found");
+			logger.info("No hotel found");
 		}
 		return bestRatedHotel;
 	}
