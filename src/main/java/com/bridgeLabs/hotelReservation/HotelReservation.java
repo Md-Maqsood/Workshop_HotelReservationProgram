@@ -27,8 +27,8 @@ public class HotelReservation {
 	/**
 	 * uc1
 	 */
-	public void addHotel(String name, int rate) {
-		Hotel hotel=new Hotel(name, rate);
+	public void addHotel(String name, int weekdayRate, int weekendRate) {
+		Hotel hotel=new Hotel(name, weekdayRate, weekendRate);
 		this.hotels.add(hotel);
 	}
 	
@@ -47,7 +47,7 @@ public class HotelReservation {
 	
 	public Hotel getCheapestHotel(Customer customer) {
 		int numDays=customer.getNumDays();
-		Map<Hotel, Integer> hotelToTotalRateMap=hotels.stream().collect(Collectors.toMap(hotel->hotel, hotel->hotel.getRate()*numDays));
+		Map<Hotel, Integer> hotelToTotalRateMap=hotels.stream().collect(Collectors.toMap(hotel->hotel, hotel->hotel.getWeekdayRate()*numDays));
 		Hotel cheapestHotel=hotelToTotalRateMap.keySet().stream().min((n1,n2)->hotelToTotalRateMap.get(n1)-hotelToTotalRateMap.get(n2)).orElse(null);
 		logger.info(cheapestHotel.getName()+", Total Rates: $"+hotelToTotalRateMap.get(cheapestHotel));
 		return cheapestHotel;
@@ -55,11 +55,10 @@ public class HotelReservation {
 	
 	public static void main(String[] args) {
 		HotelReservation hotelReservation=new HotelReservation();
-		hotelReservation.addHotel("Lakewood", 110);
-		hotelReservation.addHotel("Bridgewood", 160);
-		hotelReservation.addHotel("Ridgewood", 220);
-		Customer customer=hotelReservation.getCustomerInput();
-		hotelReservation.getCheapestHotel(customer);
+		hotelReservation.addHotel("Lakewood", 110, 90);
+		hotelReservation.addHotel("Bridgewood", 150, 50);
+		hotelReservation.addHotel("Ridgewood", 220, 150);
+		hotelReservation.hotels.forEach(hotel->System.out.println(hotel));
 	}
 }
 
@@ -83,11 +82,19 @@ class Customer{
 
 class Hotel{
 	private String name;
-	private int rate;
-	public Hotel(String name, int rate) {
+	private int weekdayRate;
+	private int weekendRate;
+	public Hotel(String name, int weekdayRate, int weekendRate) {
 		super();
 		this.name = name;
-		this.rate = rate;
+		this.weekdayRate = weekdayRate;
+		this.weekendRate = weekendRate;
+	}
+	public int getWeekendRate() {
+		return weekendRate;
+	}
+	public void setWeekendRate(int weekendRate) {
+		this.weekendRate = weekendRate;
 	}
 	public String getName() {
 		return name;
@@ -95,14 +102,14 @@ class Hotel{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getRate() {
-		return rate;
+	public int getWeekdayRate() {
+		return weekdayRate;
 	}
-	public void setRate(int rate) {
-		this.rate = rate;
+	public void setWeekdayRate(int rate) {
+		this.weekdayRate = rate;
 	}
 	@Override
 	public String toString() {
-		return "Hotel [\nName=" + name + "\nRate=$" + rate + "\n]";
+		return "Hotel [\nName=" + name + "\nWeekday Rate=$" + weekdayRate + "\nWeekend Rate=$" + weekendRate + "\n]";
 	}
 }
