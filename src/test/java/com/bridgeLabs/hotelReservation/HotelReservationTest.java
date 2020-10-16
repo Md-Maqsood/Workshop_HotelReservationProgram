@@ -34,4 +34,15 @@ public class HotelReservationTest {
 		Assert.assertEquals(90, hotelWeekendRate);
 		Assert.assertEquals(110, hotelWeekdayRate);
 	}
+	
+	@Test
+	public void givenHotelsWhenAddedHotelsWithWeekdayAndWeekendRatesAndCheapestHotelFoundShouldReturnCheapestHotel() {
+		HotelReservation hotelReservation = new HotelReservation();
+		hotelReservation.addHotel("Lakewood", 110, 90);
+		hotelReservation.addHotel("Bridgewood", 150, 50);
+		hotelReservation.addHotel("Ridgewood", 220, 150);
+		Customer customer = new Customer(1, 2);
+		Hotel cheapestHotel = hotelReservation.getCheapestHotel(customer);
+		Assert.assertEquals("Bridgewood", cheapestHotel.getName());
+	}
 }
