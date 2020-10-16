@@ -31,8 +31,10 @@ public class HotelReservation {
 	/**
 	 * uc1
 	 */
-	public void addHotel(String name, int weekdayRate, int weekendRate, int rating) {
-		Hotel hotel = new Hotel(name, weekdayRate, weekendRate, rating);
+	public void addHotel(String name, int regularWeekdayRate, int regularWeekendRate, int rewardsWeekdayRate,
+			int rewardsWeekendRate, int rating) {
+		Hotel hotel = new Hotel(name, regularWeekdayRate, regularWeekendRate, rewardsWeekdayRate, rewardsWeekendRate,
+				rating);
 		this.hotels.add(hotel);
 	}
 
@@ -54,13 +56,12 @@ public class HotelReservation {
 		int numWeekends = customer.getNumWeekends();
 		int numWeekdays = customer.getNumWeekdays();
 		Map<Hotel, Integer> hotelToTotalRateMap = hotels.stream().collect(Collectors.toMap(hotel -> hotel,
-				hotel -> hotel.getWeekendRate() * numWeekends + hotel.getWeekdayRate() * numWeekdays));
-		Hotel cheapestHotel = hotelToTotalRateMap.keySet().stream()
-				.min((hotel1, hotel2) -> {
-					int rateDifference=hotelToTotalRateMap.get(hotel1) - hotelToTotalRateMap.get(hotel2);
-					int ratingDifference = hotel1.getRating() - hotel2.getRating();
-					return rateDifference == 0 ? -(ratingDifference) : rateDifference;
-				}).orElse(null);
+				hotel -> hotel.getRegularWeekendRate() * numWeekends + hotel.getRegularWeekdayRate() * numWeekdays));
+		Hotel cheapestHotel = hotelToTotalRateMap.keySet().stream().min((hotel1, hotel2) -> {
+			int rateDifference = hotelToTotalRateMap.get(hotel1) - hotelToTotalRateMap.get(hotel2);
+			int ratingDifference = hotel1.getRating() - hotel2.getRating();
+			return rateDifference == 0 ? -(ratingDifference) : rateDifference;
+		}).orElse(null);
 		try {
 			logger.debug(cheapestHotel.getName() + ", Rating: " + cheapestHotel.getRating() + " and Total Rates: $"
 					+ hotelToTotalRateMap.get(cheapestHotel));
@@ -76,22 +77,21 @@ public class HotelReservation {
 		Hotel bestRatedHotel = hotels.stream().max((hotel1, hotel2) -> hotel1.getRating() - hotel2.getRating())
 				.orElse(null);
 		try {
-			int totalRate = bestRatedHotel.getWeekdayRate() * numWeekdays
-					+ bestRatedHotel.getWeekendRate() * numWeekends;
+			int totalRate = bestRatedHotel.getRegularWeekdayRate() * numWeekdays
+					+ bestRatedHotel.getRegularWeekendRate() * numWeekends;
 			logger.debug(bestRatedHotel.getName() + " & Total Rates $" + totalRate);
 		} catch (NullPointerException e) {
 			logger.debug("No hotel found");
 		}
 		return bestRatedHotel;
 	}
-	
+
 	public static void main(String[] args) {
 		HotelReservation hotelReservation = new HotelReservation();
-		hotelReservation.addHotel("Lakewood", 110, 90, 3);
-		hotelReservation.addHotel("Bridgewood", 150, 50, 4);
-		hotelReservation.addHotel("Ridgewood", 220, 150, 5);
-		Customer customer=hotelReservation.getCustomerInput();
-		hotelReservation.getBestRatedHotel(customer);
+		hotelReservation.addHotel("Lakewood", 110, 90, 80, 80, 3);
+		hotelReservation.addHotel("Bridgewood", 150, 50, 110, 50, 4);
+		hotelReservation.addHotel("Ridgewood", 220, 150, 100, 40, 5);
+		hotelReservation.hotels.forEach(hotel->logger.info(hotel));
 	}
 }
 
@@ -125,16 +125,37 @@ class Customer {
 
 class Hotel {
 	private String name;
-	private int weekdayRate;
-	private int weekendRate;
+	private int regularWeekdayRate;
+	private int regularWeekendRate;
+	private int rewardsWeekdayRate;
+	private int rewardsWeekendRate;
 	private int rating;
 
-	public Hotel(String name, int weekdayRate, int weekendRate, int rating) {
+	public Hotel(String name, int regularWeekdayRate, int regularWeekendRate, int rewardsWeekdayRate,
+			int rewardsWeekendRate, int rating) {
 		super();
 		this.name = name;
-		this.weekdayRate = weekdayRate;
-		this.weekendRate = weekendRate;
-		this.rating=rating;
+		this.regularWeekdayRate = regularWeekdayRate;
+		this.regularWeekendRate = regularWeekendRate;
+		this.rewardsWeekdayRate = rewardsWeekdayRate;
+		this.rewardsWeekendRate = rewardsWeekendRate;
+		this.rating = rating;
+	}
+
+	public int getRewardsWeekdayRate() {
+		return rewardsWeekdayRate;
+	}
+
+	public void setRewardsWeekdayRate(int rewardsWeekdayRate) {
+		this.rewardsWeekdayRate = rewardsWeekdayRate;
+	}
+
+	public int getRewardsWeekendRate() {
+		return rewardsWeekendRate;
+	}
+
+	public void setRewardsWeekendRate(int rewardsWeekendRate) {
+		this.rewardsWeekendRate = rewardsWeekendRate;
 	}
 
 	public int getRating() {
@@ -145,12 +166,12 @@ class Hotel {
 		this.rating = rating;
 	}
 
-	public int getWeekendRate() {
-		return weekendRate;
+	public int getRegularWeekendRate() {
+		return regularWeekendRate;
 	}
 
-	public void setWeekendRate(int weekendRate) {
-		this.weekendRate = weekendRate;
+	public void setRegularWeekendRate(int regularWeekendRate) {
+		this.regularWeekendRate = regularWeekendRate;
 	}
 
 	public String getName() {
@@ -161,16 +182,18 @@ class Hotel {
 		this.name = name;
 	}
 
-	public int getWeekdayRate() {
-		return weekdayRate;
+	public int getRegularWeekdayRate() {
+		return regularWeekdayRate;
 	}
 
-	public void setWeekdayRate(int rate) {
-		this.weekdayRate = rate;
+	public void setRegularWeekdayRate(int regularWeekdayRate) {
+		this.regularWeekdayRate = regularWeekdayRate;
 	}
 
 	@Override
 	public String toString() {
-		return "Hotel [\nName=" + name + "\nWeekday Rate=$" + weekdayRate + "\nWeekend Rate=$" + weekendRate +"\nRating= " + rating + "\n]";
+		return "Hotel [\nName=" + name + "\nRegular Weekday Rate=$" + regularWeekdayRate + "\nRegular Weekend Rate=$"
+				+ regularWeekendRate + "\nRewards Weekday Rate=$" + rewardsWeekdayRate + "\nRewards Weekend Rate=$"
+				+ rewardsWeekendRate + "\nRating= " + rating + "\n]";
 	}
 }
