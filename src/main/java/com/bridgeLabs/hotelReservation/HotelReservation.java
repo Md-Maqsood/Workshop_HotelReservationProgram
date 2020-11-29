@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -28,7 +29,7 @@ public class HotelReservation {
 	public List<Hotel> hotels;
 
 	public HotelReservation() {
-		this.hotels = new ArrayList<Hotel>();
+		this.hotels = new LinkedList<Hotel>();
 	}
 
 	public void addHotel(String name, int regularWeekdayRate, int regularWeekendRate, int rewardsWeekdayRate,
@@ -135,43 +136,7 @@ public class HotelReservation {
 	}
 }
 
-class Customer {
-	private int numWeekdays;
-	private int numWeekends;
-	private CustomerType customerType;
 
-	public Customer(int numWeekdays, int numWeekends, CustomerType customerType) {
-		super();
-		this.numWeekdays = numWeekdays;
-		this.numWeekends = numWeekends;
-		this.customerType = customerType;
-	}
-
-	public CustomerType getCustomerType() {
-		return customerType;
-	}
-
-	public void setCustomerType(CustomerType customerType) {
-		this.customerType = customerType;
-	}
-
-	public int getNumWeekends() {
-		return numWeekends;
-	}
-
-	public void setNumWeekends(int numWeekends) {
-		this.numWeekends = numWeekends;
-	}
-
-	public int getNumWeekdays() {
-		return numWeekdays;
-	}
-
-	public void setNumWeekdays(int numWeekdays) {
-		this.numWeekdays = numWeekdays;
-	}
-
-}
 
 class InvalidInputException extends Exception {
 	public InvalidInputException(String message) {
@@ -183,77 +148,4 @@ enum CustomerType {
 	REGULAR, REWARDS
 }
 
-class Hotel {
-	private String name;
-	private int regularWeekdayRate;
-	private int regularWeekendRate;
-	private int rewardsWeekdayRate;
-	private int rewardsWeekendRate;
-	private int rating;
 
-	public Hotel(String name, int regularWeekdayRate, int regularWeekendRate, int rewardsWeekdayRate,
-			int rewardsWeekendRate, int rating) {
-		super();
-		this.name = name;
-		this.regularWeekdayRate = regularWeekdayRate;
-		this.regularWeekendRate = regularWeekendRate;
-		this.rewardsWeekdayRate = rewardsWeekdayRate;
-		this.rewardsWeekendRate = rewardsWeekendRate;
-		this.rating = rating;
-	}
-
-	public int getRewardsWeekdayRate() {
-		return rewardsWeekdayRate;
-	}
-
-	public void setRewardsWeekdayRate(int rewardsWeekdayRate) {
-		this.rewardsWeekdayRate = rewardsWeekdayRate;
-	}
-
-	public int getRewardsWeekendRate() {
-		return rewardsWeekendRate;
-	}
-
-	public void setRewardsWeekendRate(int rewardsWeekendRate) {
-		this.rewardsWeekendRate = rewardsWeekendRate;
-	}
-
-	public int getRating() {
-		return rating;
-	}
-
-	public void setRating(int rating) {
-		this.rating = rating;
-	}
-
-	public int getRegularWeekendRate() {
-		return regularWeekendRate;
-	}
-
-	public void setRegularWeekendRate(int regularWeekendRate) {
-		this.regularWeekendRate = regularWeekendRate;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getRegularWeekdayRate() {
-		return regularWeekdayRate;
-	}
-
-	public void setRegularWeekdayRate(int regularWeekdayRate) {
-		this.regularWeekdayRate = regularWeekdayRate;
-	}
-
-	@Override
-	public String toString() {
-		return "Hotel [\nName=" + name + "\nRegular Weekday Rate=$" + regularWeekdayRate + "\nRegular Weekend Rate=$"
-				+ regularWeekendRate + "\nRewards Weekday Rate=$" + rewardsWeekdayRate + "\nRewards Weekend Rate=$"
-				+ rewardsWeekendRate + "\nRating= " + rating + "\n]";
-	}
-}
